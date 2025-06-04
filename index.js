@@ -33,6 +33,31 @@ async function run() {
     const reviewCollection = database.collection("reviews");
 
 
+    //data related apis
+
+    //get all stored menus
+    //get filtered menus if query is included in the request
+    app.get('/menus', async(req, res) => {
+        const category = req.query?.category;
+
+        let query = {};
+
+        if(category){
+            query = {
+            category: category
+        }
+        };
+
+        const result = await menuCollection.find(query).toArray();
+        res.send(result);
+    })
+
+    // get all reviews
+    app.get('/reviews', async(req, res) => {
+      const result = await reviewCollection.find().toArray();
+      res.send(result);
+    })
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
