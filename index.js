@@ -59,6 +59,16 @@ async function run() {
       res.send(result);
     })
 
+    //get cart items of the logged in user, we don't want cart data of all user
+    app.get('/carts', async(req, res) => {
+      const email = req.query.email;
+      const query = {
+        userEmail: email
+      };
+      const result = await cartCollection.find(query).toArray();
+      res.send(result);
+    })
+
     //add each users' cart
     app.post('/carts', async(req, res) => {
       const cartItem = req.body;
