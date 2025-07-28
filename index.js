@@ -32,7 +32,15 @@ async function run() {
     const menuCollection = database.collection("menus");
     const reviewCollection = database.collection("reviews");
     const cartCollection = database.collection("carts");
+    const userCollection = database.collection("users");
 
+    //users related apis
+
+    app.post('/users', async(req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    })
 
     //data related apis
 
