@@ -36,13 +36,55 @@ async function run() {
 
     //users related apis
 
+
+
+    //get all users
+    app.get('/users', async(req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    })
+
+    //add a new user to db
     app.post('/users', async(req, res) => {
       const user = req.body;
+      //insert email if user doesn't exist
+      //techniques: 
+      //email field unique (mongoose, index)
+      //upsert
+      //simple checking
+
+      const query = { email: user.email };
+      const existingUser = await userCollection.findOne(query);
+
+      if(existingUser){
+        return res.send({ message: 'user already exists', insertedId: null});
+      }
       const result = await userCollection.insertOne(user);
       res.send(result);
     })
 
-    //data related apis
+    //make an user admin
+    app.patch('/users/admin/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id)};
+      const updatedDoc = {
+        $set: {
+          role: 'admin'
+        }
+      };
+      const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
+
+    //delete a user
+    app.delete('/users/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id)};
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    //menu related apis
 
     //get all stored menus
     //get filtered menus if query is included in the request
